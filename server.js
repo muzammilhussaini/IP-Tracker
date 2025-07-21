@@ -1,36 +1,46 @@
 const express = require('express');
-const fs = require('fs');
-const axios = require('axios'); // For GeoIP API
 const requestIp = require('request-ip');
+const nodemailer = require('nodemailer');
 const app = express();
+const PORT = process.env.PORT || 3000;
 
+// Serve static files
 app.use(express.static('public'));
-app.use(requestIp.mw());
 
-// When someone visits
-app.get('/', async (req, res) => {
-    const ip = req.clientIp || req.ip;
-
-    // Get GeoIP data
-    let geoInfo = {};
-    try {
-        const geoRes = await axios.get(`https://ipapi.co/${ip}/json/`);
-        geoInfo = geoRes.data;
-    } catch (err) {
-        console.error('GeoIP lookup failed:', err.message);
+// Email transporter setup (Gmail)
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'muzammilhussain5857@gmail.com',        // your Gmail
+        pass: 'kbre yvra vuai nrpw'      // the app password
     }
+});
 
-    const logEntry = `[${new Date().toISOString()}] IP: ${ip} | Country: ${geoInfo.country_name} | City: ${geoInfo.city} | Device: ${req.headers['user-agent']}\n`;
+// Handle visits
+app.get('/', (req, res) => {
+    const clientIp = requestIp.getClientIp(req);
+    console.log(`New visitor: ${clientIp}`);
 
-    console.log(logEntry); // Also print to console
-    fs.appendFile('log.txt', logEntry, err => {
-        if (err) console.error('Failed to write to log file:', err);
+    // Send yourself an email
+    const mailOptions = {
+        from: 'muzammilhussain5857@gmail.com',
+        to: 'muzammilhussain5857@gmail.com',          // Send to yourself
+        subject: '🎉 New Visitor on Your Website',
+        text: `Someone visited your site!\nIP Address: ${clientIp}\nTime: ${new Date()}`
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('❌ Error sending email:', error);
+        } else {
+            console.log('✅ Email sent: ' + info.response);
+        }
     });
 
     res.sendFile(__dirname + '/public/index.html');
 });
 
-const PORT = process.env.PORT || 3000;
+// Start server
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });
