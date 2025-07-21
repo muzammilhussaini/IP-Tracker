@@ -4,8 +4,6 @@ const axios = require('axios'); // For GeoIP API
 const requestIp = require('request-ip');
 const app = express();
 
-const PORT = process.env.PORT || 3000;
-
 app.use(express.static('public'));
 app.use(requestIp.mw());
 
