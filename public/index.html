@@ -1,15 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My First Web Project</title>
-    <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Age Guesser</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>This is my first web project 😅</h1>
-        <p>I built this simple page to learn web development. Thanks for visiting!</p>
+        <h1>AI Age Guesser</h1>
+        <p class="subtitle">This advanced AI tool can guess your exact age.</p>
+        <label for="ageInput">Enter your age:</label>
+        <div class="input-group">
+            <input type="number" id="ageInput" placeholder="e.g., 25" />
+            <button onclick="guessAge()">Guess my age</button>
+        </div>
+        <div id="loading" class="loading" style="display:none;">
+            <p id="loadingText">Calculating your age with AI...</p>
+            <div class="spinner"></div>
+        </div>
+        <p id="result" class="result"></p>
     </div>
+
+    <script>
+        const loadingSteps = [
+            "Calculating your age with AI...",
+            "Analyzing space vortexes...",
+            "Reading your ahh code...",
+            "Finalizing the result..."
+        ];
+
+        function guessAge() {
+            const ageInput = document.getElementById('ageInput').value;
+            const result = document.getElementById('result');
+            const loading = document.getElementById('loading');
+            const loadingText = document.getElementById('loadingText');
+
+            if (ageInput === '' || isNaN(ageInput)) {
+                result.textContent = "Please enter a valid number.";
+                return;
+            }
+
+            // Reset UI
+            result.textContent = '';
+            loading.style.display = 'block';
+            let step = 0;
+
+            // Show loading steps
+            const interval = setInterval(() => {
+                loadingText.textContent = loadingSteps[step];
+                step++;
+                if (step === loadingSteps.length) {
+                    clearInterval(interval);
+
+                    // Fake loading finished
+                    setTimeout(() => {
+                        loading.style.display = 'none';
+                        result.textContent = `Your age is: ${ageInput}`;
+                    }, 1000);
+                }
+            }, 1500); // Change every 1.5s
+        }
+    </script>
 </body>
 </html>
