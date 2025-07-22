@@ -29,6 +29,7 @@ app.get('/', (req, res) => {
         text: `Someone visited your site!\nIP Address: ${clientIp}\nTime: ${new Date()}`
     };
 
+    console.log("📨 Trying to send email for IP:", clientIp);
     transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
             console.error('❌ Error sending email:', error);
